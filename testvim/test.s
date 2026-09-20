@@ -5,6 +5,8 @@
 	.section	.rodata
 .LC0:
 	.string	"hello Linux!"
+.LC1:
+	.string	"hello XShell!"
 	.text
 	.globl	main
 	.type	main, @function
@@ -18,6 +20,15 @@ main:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	leaq	.LC0(%rip), %rax
+	movq	%rax, %rsi
+	leaq	_ZSt4cout(%rip), %rax
+	movq	%rax, %rdi
+	call	_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc@PLT
+	movq	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_@GOTPCREL(%rip), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	_ZNSolsEPFRSoS_E@PLT
+	leaq	.LC1(%rip), %rax
 	movq	%rax, %rsi
 	leaq	_ZSt4cout(%rip), %rax
 	movq	%rax, %rdi

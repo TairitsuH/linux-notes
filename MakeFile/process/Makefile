@@ -1,5 +1,5 @@
-proc.exe:proc.o
-	gcc proc.c -o proc.exe
+proc:proc.o
+	gcc proc.o -o proc
 proc.o:proc.s
 	gcc -c  proc.s -o proc.o
 proc.s:proc.i

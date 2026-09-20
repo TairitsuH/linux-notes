@@ -1,6 +1,6 @@
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
-BIN=processbar.exe
+BIN=processbar
 
 $(BIN):$(OBJ)
 	gcc -o $@ $^

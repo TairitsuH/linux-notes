@@ -27,7 +27,7 @@ void FlushProcess(double total, double current) //一次打印
     fflush(stdout);
 }
 
-//无法使用
+//无法使用，伪进度条
 void process_v1()
 {
     char buffer[NUM];

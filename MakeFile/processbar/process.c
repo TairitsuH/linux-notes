@@ -8,13 +8,13 @@
 void FlushProcess(double total, double current) //一次打印
 {
     char buffer[NUM];
-    memset(buffer, 0,sizeof(buffer));
+    memset(buffer, '-',sizeof(buffer));
     const char* lable = "|/-\\";
     int len = strlen(lable);
 
     static int cnt = 0; //lable下标：静态是为了能不间断旋转
     int num = (int)(current * 100) / total; //下载进度（需要加载多少个#
-    for(int i=0; i<num; ++i)
+    for(int i=0; i<=num; ++i)
     {
         buffer[i] = STYLE;
     }

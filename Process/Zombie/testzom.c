@@ -19,13 +19,13 @@ int main()
         printf("子进程：%d\n", getpid());
         sleep(3);
         printf("子进程结束\n");
-        exit(0);
+        exit(EXIT_SUCCESS);
     }
     else
     {
         printf("我是父进程%d，我的子进程是：%d\n", getpid(), ret);
         printf("parent is sleeping...\n");
-        sleep(60); 
+        sleep(30); 
     }
     
     return 0;

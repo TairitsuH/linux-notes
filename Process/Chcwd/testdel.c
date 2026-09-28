@@ -2,6 +2,8 @@
 #include<unistd.h>
 #include<sys/types.h>
 
+
+//测试通过chdir改变cwd
 int main()
 {
     chdir("/home/yun");

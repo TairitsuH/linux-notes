@@ -1,4 +1,4 @@
-BIN=tgrep
+BIN=testenv
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 

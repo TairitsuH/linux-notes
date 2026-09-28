@@ -23,7 +23,7 @@ int main()
         sleep(1);
         printf("i'm child, my pid:%d, ppid:%d\n", getpid(), getppid());
         //进程替换
-        //execl("/bin/ls", "/bin/ls", "-l", "-a", NULL); 
+        execl("/bin/ls", "/bin/ls", "-l", "-a", NULL); 
         //execlp("ls", "ls", "-l", "-a", NULL); //带p默认PATH
         extern char** environ;
         //待修改execle("ps", "ps", "-ef",  NULL, envp); //带e的传入环境变量

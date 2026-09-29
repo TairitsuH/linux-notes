@@ -26,6 +26,7 @@ int main()
         printf("子进程：%d, 正在运行\n", getpid());
         sleep(5);
         int a = 1 / 0;
+        (void)a;
         //printf("子进程结束\n");
         //exit(5);
     }
@@ -45,7 +46,7 @@ int main()
         //}
         //else if(wret > 0)
         //{
-        //    printf("子进程异常退出\n);    
+        //    printf("子进程异常退出"\n);    
         //}
         //else
         //{
@@ -68,7 +69,7 @@ int main()
         while(wret == 0);
 
         //宏：
-        //WIFEXITED获取退出状态，非0正常退出，0为信号杀死（记图！）
+        //WIFEXITED判断死法，非0正常退出，0为信号杀死（记图！）
         //WEXITSTATUS获取退出码（退出状态非0时有效
 
         //正常退出

@@ -25,7 +25,8 @@ int main()
     {
         printf("子进程：%d, 正在运行\n", getpid());
         sleep(5);
-        int a = 1 / 0;
+        int b = 0;
+        int a = 1 / b;
         (void)a;
         //printf("子进程结束\n");
         //exit(5);
@@ -46,7 +47,7 @@ int main()
         //}
         //else if(wret > 0)
         //{
-        //    printf("子进程异常退出"\n);    
+        //    printf("子进程异常退出\n");    
         //}
         //else
         //{

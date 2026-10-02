@@ -1,9 +1,9 @@
-BIN=tgrep
+BIN=testfile
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 
 $(BIN):$(OBJ)
-	gcc -o $@ $^
+	gcc -g -o $@ $^
 
 .PHONY:clean
 

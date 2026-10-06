@@ -3,7 +3,7 @@ SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 
 $(BIN):$(OBJ)
-	gcc -g -o $@ $^
+	gcc -o $@ $^
 
 .PHONY:clean
 

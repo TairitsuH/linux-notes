@@ -16,6 +16,9 @@ using namespace std;
 
 char* g_argv[MAXARGC];
 int g_argc = 0;
+char cwd[1024];
+char cwdenv[1024];
+int exitcode = 0;
 
 const char* GetUserName()
 {
@@ -23,17 +26,31 @@ const char* GetUserName()
     return name == NULL ? "NONE" : name;
 }
 
-//const char* GetHostName(char hostname[], int size)
-//{
-//
-//    gethostname(hostname, size);
-//    return hostname;
-//}
+const char* GetHostName()
+{
+    const char* hostname = getenv("HOSTNAME");
+    return hostname == NULL ? "NONE" : hostname;
+}
 
 const char* GetPwd()
 {
-    const char* pwd = getenv("PWD");
+    // 不要用环境变量，因为进程路径先变环境变量再变，而shell内部会更新环境变量，而myshell没做更新工作
+    // const char* pwd = getenv("PWD");
+    const char* pwd = getcwd(cwd, sizeof(cwd));
+    
+    //导入环境变量
+    if(pwd != NULL)
+    {
+        snprintf(cwdenv, sizeof(cwdenv), "PWD=%s", pwd);
+        putenv(cwdenv);
+    }
     return pwd == NULL ? "NONE" : pwd;
+}
+
+const char* GetHome()
+{
+    const char* home = getenv("HOME");
+    return (home == NULL ? "" : home);
 }
 
 //获取当前目录名
@@ -41,7 +58,7 @@ string DirName(const char* pwd)
 {
     #define SLASH "/"
     string dir = pwd;
-    if(pwd == SLASH) return SLASH;
+    if(strcmp(pwd, SLASH) == 0) return SLASH;
     auto pos = dir.rfind(SLASH);
     if(pos == string::npos) return "BUG?";
     return dir.substr(pos + 1);
@@ -49,8 +66,7 @@ string DirName(const char* pwd)
 
 void MakeCommamdLine(char* cmd_prompt, int size)
 {
-    char s[5] = "tmp";
-    snprintf(cmd_prompt, size, FORMAT, GetUserName(), s, DirName(GetPwd()).c_str());
+    snprintf(cmd_prompt, size, FORMAT, GetUserName(), GetHostName(), DirName(GetPwd()).c_str());
 }
 
 void PrintCommandPrompt()
@@ -79,8 +95,8 @@ bool CommandParse(char* commandline)
 
     g_argv[g_argc++] = strtok(commandline, SEP);
     while((bool)(g_argv[g_argc++] = strtok(nullptr, SEP))); //继续分割不用重新传
-    --g_argc; //
-    return true;
+    --g_argc; 
+    return g_argc == 0 ? true : false;
 }
 
 void printargv()
@@ -93,6 +109,65 @@ void printargv()
     printf("argc:%d\n", g_argc);
 }
 
+//检测内建命令:对命令做判断
+bool Cd()
+{   
+    if(g_argc == 1)
+    {
+        string home = GetHome();
+        if(home.empty()) return true;
+        chdir(home.c_str());
+    }
+    else 
+    {
+        string where = g_argv[1];
+        if(where == "-")
+        {
+            //todo
+        }
+        else if(where == "~")
+        {
+            string home = GetHome();
+            if(home == "") return true;
+            chdir(home.c_str());
+        }
+        else
+        {
+            chdir(where.c_str());
+        }
+    }
+    return true;
+}
+
+bool CheckAndExecBuiltin()
+{
+    string cmd = g_argv[0];
+    if(cmd == "cd") //const char*要用strcmp比较！==仅仅比较地址！
+    {
+        Cd();
+        return true;
+    }
+    else if(cmd == "echo")
+    {
+        //echo "hello world"
+        //echo $?
+        //echo $PATH
+        if(g_argc == 2)
+        {
+            string op = g_argv[1];
+            if(op == "$?")
+            {
+                cout << exitcode << endl;
+            }
+        }
+
+
+        return true;
+    }
+
+    return false;
+}
+
 //4. 执行命令
 int Execute()
 {
@@ -103,13 +178,15 @@ int Execute()
         execvp(g_argv[0], g_argv);
         exit(1);
     }   
-    else //father
-    {
-        pid_t rid = waitpid(pid, nullptr, 0);
-        (void) rid; //使用一下
-    }
+    
+    int status = 0;
+    //father
+    pid_t rid = waitpid(pid, &status, 0);
+    (void) rid; //使用一下
+    
+    if(rid > 0) exitcode = WEXITSTATUS(status);
 
-    return 0;
+    return exitcode;
 }
 
 
@@ -132,6 +209,12 @@ int main()
         //3. 命令行分割
         CommandParse(commandline);
         //printargv();
+
+        //4. 检测并处理内建命令
+        if(CheckAndExecBuiltin())
+        {
+            continue; //不需要创建子进程
+        }
 
         //4. 执行命令（fork，进程替换execvp
         Execute();
